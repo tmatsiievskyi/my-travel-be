@@ -1,0 +1,90 @@
+version: '3.8'
+services:
+  service-be:
+    container_name: my-travel-be
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - my-travel-network
+
+  postgres:
+    container_name: my-travel-db
+    image: postgres:16.1
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    volumes:
+      - .:/docker-entrypoint-initdb.d
+      - my-travel-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U taras -d my-travel']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    networks:
+      - my-travel-network
+
+  pgadmin:
+    container_name: my-travel-pgadmin
+    image: dpage/pgadmin4:7.2
+    env_file:
+      - .env
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - '5050:80'
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - my-travel-network
+
+  redis:
+    container_name: my-travel-redis
+    image: redis:7.2
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    networks:
+      - my-travel-network
+  redis-gui:
+    container_name: my-travel-redis-gui
+    image: redis/redisinsight:2.48.0
+    restart: always
+    ports:
+      - '5540:5540'
+    volumes:
+      - redis-insight:/data
+    networks:
+      - my-travel-network
+
+volumes:
+  my-travel-db-data:
+  redis-insight:
+  pgadmin-data:
+  redis-data:
+networks:
+  my-travel-network:
+    driver: bridge

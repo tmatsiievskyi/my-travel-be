@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "baseUrl": ".",
+    "preserveWatchOutput": true,
+    "allowJs": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    // "experimentalDecorators": true,
+    // "strictPropertyInitialization": false,
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@server/*": ["src/server/*"],
+      "@data": ["src/data/index.ts"],
+      "@modules/*": ["src/modules/*"],
+      "@itypes/*": ["src/@types/*"],
+      "@config": ["src/config/index.ts"],
+      "@exceptions/*": ["src/exceptions/*"]
+    }
+  },
+  "types": ["jest", "node"],
+  "include": ["src/**/*", "./index.ts", "test/**/*"],
+  "exclude": ["node_modules"]
+}
